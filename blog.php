@@ -19,7 +19,7 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Home » Corporate Alliance</title>
+	<title>Blog » Corporate Alliance</title>
 	<script type="text/javascript" async="" src="https://www.gstatic.com/recaptcha/api2/v1535045166622/recaptcha__en.js"></script><script type="text/javascript" async="" src="https://www.gstatic.com/recaptcha/api2/v1535045166622/recaptcha__en.js"></script><script type="text/javascript" async="" src="https://www.gstatic.com/recaptcha/api2/v1535045166622/recaptcha__en.js"></script><script src="includes/js/jquery.1.12.4.min.js"></script>
 	<link rel="stylesheet" media="all" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,300">
 	<link rel="stylesheet" media="all" type="text/css" href="assets/font-awesome/css/font-awesome.min.css">
@@ -140,6 +140,7 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
 	.nectar-milestone {
 		display: inline-block;
 		padding-bottom: 25px;
+		color: #44c3ff;
 		
 	}
 	.symbol {
@@ -179,96 +180,14 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
 			</div><!--/container-->
 		</header>
 		<div class="main_content_unlogged">
-			<div id="top-slider">
-				<!--placeholder-->
-				<img src="img/style/corpa_slider.jpg" alt="Corporate Alliance Resource Bucket" width="100%">
-			</div>
-			<div class="content-block">
-				<div class="blocktitle-1" style="padding-top: 0px;padding-bottom: 0px;">
+			<div class="content-block" style="    background: #0b7d79;    color:  #ddd; padding: 60px 0; text-align: center;">
+				<h1 style="    font-weight:  bold;    text-align:  center;">In Development</h1>
+				<div class="blocktitle-2" style="padding-top: 30px;padding-bottom: 0px;">
 					<div class="row-bg-wrap"> <div class="row-bg   " style=""></div> </div>
-					<div class="col span_12 light " style="    background: #0e5f49;    padding: 10px 50px;    margin-bottom:  40px;">
-						<h1 style="    font-weight:  bold;    text-align:  center;">Who we are</h1>
+					<div class="col span_12 light " style="background: #44c3a1;padding: 100px 50px;margin-bottom:  40px;">	
+						<p>Please come back later.</p>
 					</div>
 				</div>			
-				<div class="blockcontent-1" style="padding-top: 0px; padding-bottom: 0px; ">
-							<p style="text-align: center;">The Corporate Alliance is the nationally recognised membership charity working with employers to lessen the impact of domestic violence in the workplace.</p>
-				</div>
-				<div class="blockcontent-1" style="padding-top: 50px;padding-bottom: 50px;margin:  auto;width: 80%;">
-					<div class="sub-blockcontent-4">
-						<div class="wpb_wrapper">
-							<div class="nectar-milestone " style="font-size: 62px; line-height: 62px;"><span>25</span><span class="symbol">%</span></div> <div class="subject">of women are affected by domestic violence during their adult lifetimes</div> 
-						</div> 
-					</div> 
-
-					<div class="sub-blockcontent-4">
-						<div class="wpb_wrapper">
-							<div class="nectar-milestone " style="font-size: 62px; line-height: 62px;"><span>16</span><span class="symbol">%</span></div> <div class="subject">of men are affected by domestic violence during their adult lifetimes</div> 
-						</div> 
-					</div> 
-
-					<div class="sub-blockcontent-4">
-						<div class="wpb_wrapper">
-							<div class="nectar-milestone " style="font-size: 62px; line-height: 62px;"><span>75</span><span class="symbol">%</span></div> <div class="subject">of people who endure domestic violence are targetted at work</div> 
-						</div> 
-					</div> 
-
-					<div class="sub-blockcontent-4">
-						<div class="wpb_wrapper">
-							<div class="nectar-milestone " style="font-size: 62px; line-height: 62px;"><span>58</span><span class="symbol">%</span></div> <div class="subject">of abused women miss at least 3 days of work a month</div> 
-						</div> 
-					</div> 
-				</div>
-			</div>
-			<div class="content-block" style="
-    background: #0b7d79;
-    color:  #ddd;
-">
-				<div class="blocktitle-2" style="padding-top: 0px;padding-bottom: 0px;">
-					<div class="row-bg-wrap"> <div class="row-bg   " style=""></div> </div>
-					<div class="col span_12 light " style="background: #44c3a1;padding: 10px 50px;margin-bottom:  40px;">
-						<h1 style="    font-weight:  bold;    text-align:  center;">Our Team Members</h1>
-					</div>
-				</div>			
-				<div class="blockcontent-1" style="padding-top: 0px; padding-bottom: 0px; ">
-							<p style="text-align: center;">We are a group of student from La Trobe University currently studying Bachelor of IT. This is our final year before graduate.</p>
-				</div>
-				<div class="blockcontent-1" style="padding-top: 50px; padding-bottom: 50px; ">
-					<div class="sub-blockcontent-3">
-						<div class="wpb_wrapper">
-							<div class="nectar-milestone " style="font-size: 32px; line-height: 62px;"><span>Hoang Ha Nam</span></div> <div class="subject">Project Leader</div> 
-						</div> 
-					</div> 
-
-					<div class="sub-blockcontent-3">
-						<div class="wpb_wrapper">
-							<div class="nectar-milestone " style="font-size: 32px; line-height: 62px;"><span>Hana Phung</span></div> <div class="subject">Secretary</div> 
-						</div> 
-					</div> 
-
-					<div class="sub-blockcontent-3">
-						<div class="wpb_wrapper">
-							<div class="nectar-milestone " style="font-size: 32px; line-height: 62px;"><span>Vincent Vu</span></div> <div class="subject">Project Assistant</div> 
-						</div> 
-					</div> 
-
-					<div class="sub-blockcontent-3">
-						<div class="wpb_wrapper">
-							<div class="nectar-milestone " style="font-size: 32px; line-height: 62px;"><span>Patrick Wang</span></div> <div class="subject">Customer Service</div> 
-						</div> 
-					</div> 
-
-					<div class="sub-blockcontent-3">
-						<div class="wpb_wrapper">
-							<div class="nectar-milestone " style="font-size: 32px; line-height: 62px;"><span>Molin Yuan</span></div> <div class="subject">Marketing Development</div> 
-						</div> 
-					</div> 
-
-					<div class="sub-blockcontent-3">
-						<div class="wpb_wrapper">
-							<div class="nectar-milestone " style="font-size: 32px; line-height: 62px;"><span>Christ Li</span></div> <div class="subject">Project Development</div> 
-						</div> 
-					</div> 
-				</div>
 			
 			</div>
 			<div class="content-block">

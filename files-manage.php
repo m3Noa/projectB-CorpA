@@ -34,6 +34,14 @@ $sql = "SELECT * FROM ca_files";
 	<link rel="stylesheet" media="all" type="text/css" href="assets/font-awesome/css/font-awesome.min.css" />
 	<link rel="stylesheet" media="all" type="text/css" href="assets/bootstrap/css/bootstrap.min.css" />
 	<link rel="stylesheet" media="all" type="text/css" href="css/main.min.css" />
+	<style>
+	td, th {
+		padding: 10px;
+	}
+	th {
+		background: #179292;
+		color: #eee;
+	}</style>
 </head>
 <body class="home logged-in logged-as-admin dashboard hide_title menu_hidden backend" data-gr-c-s-loaded="true">
 	<div class="container-custom">

@@ -16,7 +16,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Dashboard » Corporate Alliance</title>
+	<title>File Categories » Corporate Alliance</title>
 	<script src="includes/js/jquery.1.12.4.min.js"></script>
 	<link rel="stylesheet" media="all" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,300" />
 	<link rel="stylesheet" media="all" type="text/css" href="assets/font-awesome/css/font-awesome.min.css" />
@@ -128,9 +128,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 								<div class="widget">
 									<h4>Welcome Board </h4>
 									<div class="widget_int">
-										<p>Hi, <b><?php echo htmlspecialchars($_SESSION["realname"]); ?></b>. Welcome to User Dashboard.</p>
-										<hr>
-										<p>(Maybe follow with a List of Recent News/Blog Posts)</p>
+										<p>This feature is still in development. Please come back later!</p>
 									</div>
 								</div>
 							</div>

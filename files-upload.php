@@ -13,8 +13,8 @@ require_once "includes/connect.php";
 
 // Define variables and initialize with empty values
 $username = $_SESSION["username"];
-$fName = $fDesc = $fUrl = "";
-$filename_err = $fileDesc_err = $sql_err = $note = "";
+$fName = $fDesc = $fUrl = $filename = $filetype = $fileUrl = $filename_err = $fileDesc_err = $sql_err = $note = "";
+$filesize = 0;
 
 
 // Check if the form was submitted
@@ -22,13 +22,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 	// Check required information
 	if(empty(trim($_POST["filename"]))) {
 		$filename_err = "Please enter a name for the file.";
-		exit;
 	}
 	else
 		$fName = trim($_POST["filename"]);
 	if(empty(trim($_POST["fileDesc"]))) {
 		$fileDesc_err = "Please enter the file description.";
-		exit;
 	}	
 	else
 		$fDesc = trim($_POST["fileDesc"]);
@@ -39,7 +37,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 	
 	
 	// Check if file was uploaded from local computer without errors
-	if(isset($_FILES["resource"]) && $_FILES["resource"]["error"] == 0){
+	if(isset($_FILES["resource"]) && $_FILES["resource"]["error"] == 0 && $filename_err == "" && $fileDesc_err == ""){
 		$allowed = array(
 			// image types
 			"jpg" => "image/jpg", 
@@ -266,13 +264,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 									<div>
 										<hr>
 										<?php // Debug code
-										if($_FILES["resource"]["error"] > 0){
-											echo "Error: " . $_FILES["resource"]["error"] . "<br>";
+										if($note != ""){
+											echo "Error: " . $note . "<br>";
 										} else{
-											echo "File Name: " . $_FILES["resource"]["name"] . "<br>";
-											echo "File Type: " . $_FILES["resource"]["type"] . "<br>";
-											echo "File Size: " . ($_FILES["resource"]["size"] / 1024) . " KB<br>";
-											echo "Stored in: " . $_FILES["resource"]["tmp_name"];
+											echo "File Name: " . $filename . "<br>";
+											echo "File Type: " . $filetype . "<br>";
+											echo "File Size: " . ($filesize / 1024) . " KB<br>";
+											echo "Stored in: " . $fileUrl;
 										}
 										?>	
 									</div>
