@@ -1,15 +1,15 @@
 <?php
-// Initialize the session
-//session_start();
- 
+// user levels that have access to this page
+$allowed_levels = array(9,8,7,0);
+// Include file
+require_once('sys_includes.php');
+$page_title = "Log in &raquo; Corporate Alliance";
+
 // Check if the user is already logged in, if yes then redirect him to welcome page
-if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+if(check_for_session(false) == true){
     header("location: home.php");
     exit;
 }
- 
-// Include file
-require_once "includes/connect.php";
  
 // Define variables and initialize with empty values
 $username = $realname = $password = "";
@@ -35,7 +35,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Validate credentials
     if(empty($username_err) && empty($password_err)){
         // Prepare a select statement
-        $sql = "SELECT id, user, password, name FROM ca_users WHERE user = ?";
+        $sql = "SELECT id, user, password, name, level, corp_id FROM ca_users WHERE user = ?";
         
         if($stmt = mysqli_prepare($link, $sql)){
             // Bind variables to the prepared statement as parameters
@@ -52,7 +52,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 // Check if username exists, if yes then verify password
                 if(mysqli_stmt_num_rows($stmt) == 1){                    
                     // Bind result variables
-                    mysqli_stmt_bind_result($stmt, $id, $username, $hashed_password, $realname);
+                    mysqli_stmt_bind_result($stmt, $id, $username, $hashed_password, $realname, $userlevel, $usercorpid);
                     if(mysqli_stmt_fetch($stmt)){
                         if(password_verify($password, $hashed_password)){
                             // Password is correct, so start a new session
@@ -63,6 +63,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;
                             $_SESSION["realname"] = $realname;
+							$_SESSION["userlevel"] = $userlevel;
+							$_SESSION["usercorpid"] = $usercorpid;
                             
                             // Redirect user to welcome page
                             header("location: home.php");
@@ -96,7 +98,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Log in &raquo; Corporate Alliance</title>
+	<title><?php echo $page_title;?></title>
 	<script src="includes/js/jquery.1.12.4.min.js"></script>
 	<link rel="stylesheet" media="all" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,300" />
 	<link rel="stylesheet" media="all" type="text/css" href="assets/font-awesome/css/font-awesome.min.css" />
