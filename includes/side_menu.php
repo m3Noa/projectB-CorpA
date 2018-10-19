@@ -1,6 +1,6 @@
 <?
 /**
- * The Main Menu of User Dashboard. At the moment it's mainly html hardcore.
+ * The Main Menu of User Dashboard. At the moment it's mainly html hardcode.
  *
  * TO DO: Rewrite the content to make it more dynamic
  */
@@ -15,40 +15,40 @@
 				<li class="separator"></li><li class="has_dropdown">
 					<a class="nav_top_level" href="#"><i class="fa fa-file fa-fw"></i><span class="menu_label">Files</span></a>
 					<ul class="dropdown_content" style="display: none;">
-						<li>
+						<?php if($userlevel > 7) {?><li>
 							<a href="files-upload.php"><span class="submenu_label">Upload</span></a>
 						</li>
-						<li class="divider"></li>
+						<li class="divider"></li><?php }?>
 						<li>
-							<a href="files-manage.php"><span class="submenu_label">Manage files</span></a>
+							<a href="files-manage.php"><span class="submenu_label">List Files</span></a>
 						</li>
 						<li class="divider"></li>
-						<li>
+						<!--li>
 							<a href="files-categories.php"><span class="submenu_label">Categories</span></a>
-						</li>
+						</li-->
 					</ul>
 				</li>
 				<li class="has_dropdown">
-					<a class="nav_top_level" href="#"><i class="fa fa-address-card fa-fw"></i><span class="menu_label">Company Profiles</span></a>
+					<a class="nav_top_level" href="#"><i class="fa fa-address-card fa-fw"></i><span class="menu_label">Corporation Profiles</span></a>
 					<ul class="dropdown_content" style="display: none;">
-						<li>
-							<a href="com_profiles-add.php"><span class="submenu_label">Add New Profile</span></a>
+						<?php if($userlevel > 7) {?><li>
+							<a href="com_profiles-add.php"><span class="submenu_label">Add/Edit Profile</span></a>
 						</li>
-						<li class="divider"></li>
+						<li class="divider"></li><?php }?>
 						<li>
-							<a href="com_profiles.php"><span class="submenu_label">Manage Profiles</span></a>
+							<a href="com_profiles.php"><span class="submenu_label">List Profiles</span></a>
 						</li>
 					</ul>
 				</li>
 				<li class="has_dropdown">
 					<a class="nav_top_level" href="#"><i class="fa fa-users fa-fw"></i><span class="menu_label">System Users</span></a>
 					<ul class="dropdown_content" style="display: none;">
-						<li>
+						<?php if($userlevel > 7) {?><li>
 							<a href="users-add.php"><span class="submenu_label">Add New User</span></a>
 						</li>
-						<li class="divider"></li>
+						<li class="divider"></li><?php }?>
 						<li>
-							<a href="users.php"><span class="submenu_label">Manage users</span></a>
+							<a href="users.php"><span class="submenu_label">List Users</span></a>
 						</li>
 					</ul>
 				</li>
@@ -57,6 +57,10 @@
 					<ul class="dropdown_content" style="display: none;">
 						<li>
 							<a href="actions-log.php"><span class="submenu_label">Actions log</span></a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="users-edit.php?user-id=<?php echo $_SESSION["id"];?>"><span class="submenu_label">Change User Profile</span></a>
 						</li>
 						<li class="divider"></li>
 						<li>

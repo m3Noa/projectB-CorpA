@@ -97,13 +97,57 @@ function can_see_content($allowed_levels) {
 	}
 }
 
+/**
+ * Delete from database function
+ */
+function dbDelete($link, $table, $condition) {
+	$sql = "DELETE FROM ".$table." WHERE ".$condition;
+	
+	if($stmt = mysqli_prepare($link, $sql)){
+	
+		// Attempt to execute the prepared statement
+		if(mysqli_stmt_execute($stmt)){
+			return "Data has been deleted from the Database";
+		} else{
+			return "Oops! Something went wrong. Please try again later.";
+		}
+		// Close statement
+		mysqli_stmt_close($stmt);       
+	} else {
+			return "The Deletion has not completed. Please try again later.";
+		}
+} 
+
+/**
+ * Create new action log
+ */
+function log_action($link, $action_id, $owner_id, $owner_user, $affected_file, $affected_file_name, $affected_account, $affected_account_name) {
+	$sql = "INSERT INTO ca_action_logs (action_id, owner_id, owner_user, affected_file, affected_file_name, affected_account, affected_account_name) VALUES (?,?,?,?,?,?,?)";
+	
+
+	if($stmt = mysqli_prepare($link, $sql)){
+		// Bind variables to the prepared statement as parameters
+		mysqli_stmt_bind_param($stmt, "iisisis", $action_id, $owner_id, $owner_user, $affected_file, $affected_file_name, $affected_account, $affected_account_name);
+	
+		// Attempt to execute the prepared statement
+		if(mysqli_stmt_execute($stmt)){
+			return "Data has been added to the Database";
+		} else{
+			return "Oops! Something went wrong. Please try again later.";
+		}
+		// Close statement
+		mysqli_stmt_close($stmt);       
+	} else {
+			return "Unsucessful. Please try again later.";
+		}
+} 
 
 /**
  * Renders an action recorded on the log.
  */
 function render_log_action($params)
 {
-	$action = $params['action'];
+	$action = $params['action_id'];
 	$timestamp = $params['timestamp'];
 	$owner_id = $params['owner_id'];
 	$owner_user = $params['owner_user'];
@@ -185,17 +229,17 @@ function render_log_action($params)
 			$part2 = $affected_account_name;
 			break;
 		case 12:
-			$action_ico = 'file-hidden';
+			$action_ico = 'file-comment';
 			$part1 = $owner_user;
-			$action_text = 'marked as hidden the file';
+			$action_text = 'posted new comment to the file';
 			$part2 = $affected_file_name;
 			$part3 = 'to:';
 			$part4 = $affected_account_name;
 			break;
 		case 13:
-			$action_ico = 'file-visible';
+			$action_ico = 'file-comment-delete';
 			$part1 = $owner_user;
-			$action_text = 'marked as visible the file';
+			$action_text = 'deleted a comment on the file';
 			$part2 = $affected_file_name;
 			$part3 = 'to:';
 			$part4 = $affected_account_name;
@@ -254,7 +298,7 @@ function render_log_action($params)
 			break;
 	}
 
-	$date = date(TIMEFORMAT_USE,strtotime($timestamp));
+	$date = $timestamp;
 
 	if (!empty($part1)) { $log['1'] = $part1; }
 	if (!empty($part2)) { $log['2'] = $part2; }

@@ -56,7 +56,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     if(mysqli_stmt_fetch($stmt)){
                         if(password_verify($password, $hashed_password)){
                             // Password is correct, so start a new session
-                            session_start();
+                            // session_start();
                             
                             // Store data in session variables
                             $_SESSION["loggedin"] = true;
@@ -66,6 +66,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 							$_SESSION["userlevel"] = $userlevel;
 							$_SESSION["usercorpid"] = $usercorpid;
                             
+							// log action
+							log_action($link, 1, $id, $username, 0, "", 0, "");
                             // Redirect user to welcome page
                             header("location: home.php");
                             exit;
@@ -88,7 +90,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
     
     // Close connection
-    mysqli_close($link);
+    //mysqli_close($link);
 }
 ?>
  
@@ -175,5 +177,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 		</div> <!-- main_content -->
 	</div> <!-- container-custom -->
 
-	</body>
+<?php
+// Close connection
+mysqli_close($link);
+										
+?>
+</body>
 </html>

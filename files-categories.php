@@ -54,5 +54,4 @@ include('includes/side_menu.php');
 			<script src="includes/js/main.js"></script>
 		</div> <!-- main_content -->
 	</div> <!-- container-custom -->	
-</body>
-</html>
+<?php

@@ -1,15 +1,19 @@
 <?php
 /**
- * Upload page for logged in system users.
+ * Reset Password page for logged in system users.
  *
  */
-$allowed_levels = array(9,8);
+$allowed_levels = array(9,8,7,0);
 require_once('sys_includes.php');
-$page_title = "New User";
+$page_title = "Reset Password";
+
+// Define variables and initialize with empty values
+$username = $_SESSION["username"];
+$userlevel = $_SESSION["userlevel"];
+$usercorpid = $_SESSION["usercorpid"];
 
 include('includes/header.php');
 include('includes/side_menu.php');
-
  
 // Define variables and initialize with empty values
 $new_password = $confirm_password = "";
@@ -66,7 +70,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
     
     // Close connection
-    mysqli_close($link);
+    //mysqli_close($link);
 }
 ?>
 
@@ -119,5 +123,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 			<script src="includes/js/main.js"></script>
 		</div> <!-- main_content -->
 	</div> <!-- container-custom -->	
+<?php
+// Close connection
+mysqli_close($link);
+										
+?>
 </body>
 </html>

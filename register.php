@@ -1,6 +1,11 @@
 <?php
-// Include file
-require_once "includes/connect.php";
+/**
+ * Reset Password page for logged in system users.
+ *
+ */
+$allowed_levels = array(9,8,7,0);
+require_once('sys_includes.php');
+$page_title = "Reset Password";
  
 // Define variables and initialize with empty values
 $username = $password = $realname = $confirm_password = "";
@@ -12,7 +17,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Validate username
     if(empty(trim($_POST["username"]))){
         $username_err = "Please enter a username.";
-    } else{
+    } elseif(strlen(trim($_POST["username"])) < MIN_USER_CHARS){
+        $username_err = "Password must have atleast ".MIN_USER_CHARS." characters.";
+    }
+	else{
         // Prepare a select statement
         $sql = "SELECT id FROM ca_users WHERE user = ?";
         
@@ -36,17 +44,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             } else{
                 echo "Oops! Something went wrong. Please try again later.";
             }
-        }
+			// Close statement
+			mysqli_stmt_close($stmt);       
+		}
          
-        // Close statement
-        mysqli_stmt_close($stmt);
     }
     
     // Validate password
     if(empty(trim($_POST["password"]))){
         $password_err = "Please enter a password.";     
-    } elseif(strlen(trim($_POST["password"])) < 6){
-        $password_err = "Password must have atleast 6 characters.";
+    } elseif(strlen(trim($_POST["password"])) < MIN_PASS_CHARS){
+        $password_err = "Password must have atleast ".MIN_PASS_CHARS." characters.";
     } else{
         $password = trim($_POST["password"]);
     }
@@ -70,7 +78,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(empty($username_err) && empty($password_err) && empty($confirm_password_err)){
         
         // Prepare an insert statement
-        $sql = "INSERT INTO ca_users (user, password, name) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO ca_users (user, password, name, level) VALUES (?, ?, ?, 7)";
          
         if($stmt = mysqli_prepare($link, $sql)){
             // Bind variables to the prepared statement as parameters
@@ -83,6 +91,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
+				log_action($link, 2, 0, $username, 0, "", 0, "");
                 // Redirect to login page
                 header("location: login.php");
 				exit;
@@ -96,7 +105,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
     
     // Close connection
-    mysqli_close($link);
+    //mysqli_close($link);
 }
 ?>
  
@@ -185,5 +194,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 		</div> <!-- main_content -->
 	</div> <!-- container-custom -->
 
-	</body>
+<?php
+// Close connection
+mysqli_close($link);
+										
+?>
+</body>
 </html>

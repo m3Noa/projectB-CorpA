@@ -7,18 +7,41 @@ $allowed_levels = array(9,8);
 require_once('sys_includes.php');
 $page_title = "File Upload";
 
+// Define variables and initialize with empty values
+if(!empty($_SESSION["id"])) $userid = $_SESSION["id"];
+if(!empty($_SESSION["username"])) $username = $_SESSION["username"];
+if(!empty($_SESSION["userlevel"])) $userlevel = $_SESSION["userlevel"];
+if(!empty($_SESSION["usercorpid"])) $usercorpid = $_SESSION["usercorpid"];
+
 include('includes/header.php');
 include('includes/side_menu.php');
-
-
-// Define variables and initialize with empty values
-$username = $_SESSION["username"];
-$userlevel = $_SESSION["userlevel"];
-$usercorpid = $_SESSION["usercorpid"];
 
 $fName = $fDesc = $fUrl = $filename = $filetype = $fileUrl = $filename_err = $fileDesc_err = $sql_err = $note = "";
 $filesize = 0;
 
+$allowed = array(
+	// image types
+	"jpg" => "image/jpg", 
+	"jpeg" => "image/jpeg", 
+	"gif" => "image/gif", 
+	"png" => "image/png",
+	// document types
+	'pdf' => 'application/pdf',
+	'txt' => 'text/plain',
+	'doc' => 'application/msword',
+	'rtf' => 'application/rtf',
+	'xls' => 'application/vnd.ms-excel',
+	'ppt' => 'application/vnd.ms-powerpoint',
+	// audio/video files
+	'mp3' => 'audio/mpeg',
+	'mp4' => 'video/mp4',
+	// archive files
+	'zip' => 'application/zip',
+	);
+
+$maxsize = MAX_FILESIZE * 1024 * 1024; // Test value: 5MB
+	
+	
 if(isset($_REQUEST["file-id"])){
     // Get parameters
     $fileid = urldecode($_REQUEST["file-id"]); // Decode URL-encoded string
@@ -64,7 +87,7 @@ if(isset($_REQUEST["file-id"])){
 
 		 
 	// Close connection
-	//mysqli_close($link);
+	////mysqli_close($link);
 
 }
 
@@ -92,33 +115,29 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 	else	
 		$fCorpid = $usercorpid;
 	
-	// To Do: write code for upload file from URL
-	// for now it only recieve the input url and do nothing
-	if(!empty(trim($_POST["fileUrl"]))) $fileUrl = trim($_POST["fileUrl"]);
-	
-	
+	// Upload file from URL
+	if(!empty(trim($_POST["fileUrl"])))
+	{
+		$fUrl = trim($_POST["fileUrl"]);
+		
+		// Verify file extension
+		$ext = pathinfo($fUrl, PATHINFO_EXTENSION);
+		if(!array_key_exists($ext, $allowed)) $file_err = "Error: Please select a valid file format. File Extension: ".$ext;
+		
+		// Verify file size
+		$data = file_get_contents($fUrl);
+		$filesize = strlen($data);
+		if(!$filesize || $filesize > $maxsize) 
+			$file_err = "Error: File size is larger than the allowed limit or empty. ".$clen;
+		else {
+			
+			$fileUrl = 'upload/'.str_replace(" ", "_", $fName).'_upload.'.$ext;
+			file_put_contents($fileUrl, $data);
+		}
+	} else
 	// Check if file was uploaded from local computer without errors
 	if($filename_err == "" && $fileDesc_err == ""){
 		if(isset($_FILES["resource"]) && $_FILES["resource"]["error"] == 0) {
-			$allowed = array(
-				// image types
-				"jpg" => "image/jpg", 
-				"jpeg" => "image/jpeg", 
-				"gif" => "image/gif", 
-				"png" => "image/png",
-				// document types
-				'pdf' => 'application/pdf',
-				'txt' => 'text/plain',
-				'doc' => 'application/msword',
-				'rtf' => 'application/rtf',
-				'xls' => 'application/vnd.ms-excel',
-				'ppt' => 'application/vnd.ms-powerpoint',
-				// audio/video files
-				'mp3' => 'audio/mpeg',
-				'mp4' => 'video/mp4',
-				// archive files
-				'zip' => 'application/zip',
-				);
 			$filename = $_FILES["resource"]["name"];
 			$filetype = $_FILES["resource"]["type"];
 			$filesize = $_FILES["resource"]["size"];
@@ -128,7 +147,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 			if(!array_key_exists($ext, $allowed)) die("Error: Please select a valid file format.");
 		
 			// Verify file size
-			$maxsize = MAX_FILESIZE * 1024 * 1024; // Test value: 5MB
 			if($filesize > $maxsize) die("Error: File size is larger than the allowed limit.");
 		
 			// Verify MIME type of the file
@@ -157,6 +175,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 			mysqli_stmt_bind_param($stmt, "ssssi", $fUrl, $fileUrl, $fName, $fDesc, $fCorpid);
 			// Attempt to execute the prepared statement
 			if(mysqli_stmt_execute($stmt)){
+				// Log action
+				log_action($link, 19, $userid, $username, $fileid, $fName, 0, "");
 				$note .= "Your file was updated successfully.";
 			} else {
 				//$note =  "Something went wrong when connecting to database. Please try again later."; // $sql_err 
@@ -174,7 +194,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 	}
 }
 		// Close connection
-		mysqli_close($link);
+		//mysqli_close($link);
 
 ?>
 
@@ -207,14 +227,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 											</div>
 											<div class="form-group">
 												<label for="fileDesc">File Description:</label>
-												<input class="form-control" value="<?php echo $fDesc; ?>" name="fileDesc" id="fileDesc">
+												<textarea class="form-control" name="fileDesc" id="fileDesc" rows="10"><?php echo $fDesc; ?></textarea>
 												<span><?php echo $fileDesc_err; ?></span>
 											</div>
 											<?php if ($userlevel == 9) {?>
 											<div class="form-group">
 												<label for="fileDesc">Corporation:</label>
 												<input class="form-control" value="<?php echo $fCorpid; ?>" name="corp-id" id="corp-id">
-												<span><?php echo $fileCorp_err; ?></span>
+												<span><?php if(!empty($fileCorp_err)) echo $fileCorp_err; ?></span>
 											</div>
 											<?php }?>
 											<div class="form-group">
@@ -229,7 +249,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 												<span><?php echo $note; ?></span>
 											</div>
 											<div class="inside_form_buttons">
-												<button type="submit" id="submit" class="btn btn-wide btn-primary">Upload File</button>
+												<button type="submit" id="submit" class="btn btn-wide btn-primary">Update File</button>
 											</div>
 										</fieldset>
 										<hr>
@@ -273,5 +293,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 			<script src="includes/js/main.js"></script>
 		</div> <!-- main_content -->
 	</div> <!-- container-custom -->	
+<?php
+// Close connection
+mysqli_close($link);
+										
+?>
 </body>
 </html>

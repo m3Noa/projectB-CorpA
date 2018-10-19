@@ -3,28 +3,25 @@
  * Users Manage page for logged in system users.
  *
  */
-$allowed_levels = array(9,8);
+$allowed_levels = array(9,8,7);
 require_once('sys_includes.php');
 $page_title = "Users Manage";
 
+// Define variables and initialize with empty values
+if(!empty($_SESSION["id"])) $userid = $_SESSION["id"];
+if(!empty($_SESSION["username"])) $username = $_SESSION["username"];
+if(!empty($_SESSION["userlevel"])) $userlevel = $_SESSION["userlevel"];
+if(!empty($_SESSION["usercorpid"])) $usercorpid = $_SESSION["usercorpid"];
+
 include('includes/header.php');
 include('includes/side_menu.php');
-
-// Define variables and initialize with empty values
-$username = $_SESSION["username"];
-$userlevel = $_SESSION["userlevel"];
-$usercorpid = $_SESSION["usercorpid"];
 
 $content_title = $note = "";
 
 
 // Prepare the sql statement
 $sql = "SELECT * FROM ca_users";
-if ($userlevel < 9) {
-	$sql .= " WHERE corp_id = ". $usercorpid;
-	$content_title = "Corporation ". $usercorpid; // in the future will display Corp Name insteads of ID
-} else 	
-	$content_title = "All Corporation";
+$content_title = "All Corporation";
 
 ?>
 
@@ -70,8 +67,9 @@ if ($userlevel < 9) {
 					echo "<th>Action</th>";
 				echo "</tr>";
 			while($row = mysqli_fetch_array($result)){
-			if($userlevel >= 8) 
-				$function_txt ='<a href="users-edit.php?user-id=' . $row['id'] . '"><button type="button">Delete</button></a>';
+			if($userlevel >= $row['level'] && ($userlevel == 8 && $usercorpid == $row['id']) || $userlevel == 9)
+				$function_txt ='<a href="users-edit.php?user-id=' . $row['id']. '"><button type="button">Edit</button></a>
+			<a href="users-delete.php?user-id=' . $row['id'] . '"><button type="button">Delete</button></a>';
 			else 
 				$function_txt = "";
 				echo "<tr>";
@@ -80,7 +78,7 @@ if ($userlevel < 9) {
 					echo "<td>" . $row['name'] . "</td>";
 					echo "<td>" . $row['email'] . "</td>";
 					echo "<td>" . $row['active'] . "</td>";
-					echo '<td><a href="users-edit.php?user-id=' . $row['id']. '"><button type="button">Edit</button></a>'. $function_txt .'</td>';
+					echo '<td><a href="users-details.php?user-id=' . $row['id']. '"><button type="button">View Details</button></a>'. $function_txt .'</td>';
 				echo "</tr>";
 			}
 			echo "</table>";
@@ -94,7 +92,7 @@ if ($userlevel < 9) {
 	}
 	 
 	// Close connection
-	mysqli_close($link);
+	//mysqli_close($link);
 
 ?>
 										<!--############ /End Main Content ############-->
@@ -125,5 +123,10 @@ if ($userlevel < 9) {
 			<script src="includes/js/main.js"></script>
 		</div> <!-- main_content -->
 	</div> <!-- container-custom -->	
+<?php
+// Close connection
+mysqli_close($link);
+										
+?>
 </body>
 </html>

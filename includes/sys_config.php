@@ -3,9 +3,9 @@
  * Database credentials. Assuming you are running MySQL
  * server with default setting (user 'root' with no password) */
 define('DB_SERVER', 'localhost');
-define('DB_USERNAME', 'root');
-define('DB_PASSWORD', 'mysql');
-define('DB_NAME', 'corpa');
+define('DB_USERNAME', 'id6863564_corpa_sql');
+define('DB_PASSWORD', '1z2s3e45r6f7v');
+define('DB_NAME', 'id6863564_corpa');
 define('TABLES_PREFIX', 'ca_');
 define('SITE_LANG','en');
 

@@ -7,18 +7,39 @@ $allowed_levels = array(9,8);
 require_once('sys_includes.php');
 $page_title = "File Upload";
 
+// Define variables and initialize with empty values
+if(!empty($_SESSION["id"])) $userid = $_SESSION["id"];
+if(!empty($_SESSION["username"])) $username = $_SESSION["username"];
+if(!empty($_SESSION["userlevel"])) $userlevel = $_SESSION["userlevel"];
+if(!empty($_SESSION["usercorpid"])) $usercorpid = $_SESSION["usercorpid"];
+
 include('includes/header.php');
 include('includes/side_menu.php');
 
-
-// Define variables and initialize with empty values
-$username = $_SESSION["username"];
-$userlevel = $_SESSION["userlevel"];
-$usercorpid = $_SESSION["usercorpid"];
-
-$fName = $fDesc = $fUrl = $filename = $filetype = $fileUrl = $filename_err = $fileDesc_err = $sql_err = $note = "";
+$fName = $fDesc = $fUrl = $filename = $filetype = $fileUrl = $filename_err = $fileDesc_err = $file_err = $sql_err = $note = "";
 $filesize = 0;
 
+// File Types that are allowed to be uploaded
+$allowed = array(
+	// image types
+	"jpg" => "image/jpg", 
+	"jpeg" => "image/jpeg", 
+	"gif" => "image/gif", 
+	"png" => "image/png",
+	// document types
+	'pdf' => 'application/pdf',
+	'txt' => 'text/plain',
+	'doc' => 'application/msword',
+	'rtf' => 'application/rtf',
+	'xls' => 'application/vnd.ms-excel',
+	'ppt' => 'application/vnd.ms-powerpoint',
+	// audio/video files
+	'mp3' => 'audio/mpeg',
+	'mp4' => 'video/mp4',
+	// archive files
+	'zip' => 'application/zip',
+	);
+$maxsize = MAX_FILESIZE * 1024 * 1024;
 
 // Check if the form was submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -34,32 +55,30 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 	else
 		$fDesc = trim($_POST["fileDesc"]);
 	
-	// To Do: write code for upload file from URL
-	// for now it only recieve the input url and do nothing
-	if(!empty(trim($_POST["fileUrl"]))) $fUrl = trim($_POST["fileUrl"]);
+	// Upload file from URL
+	if(!empty(trim($_POST["fileUrl"])))
+	{
+		$fUrl = trim($_POST["fileUrl"]);
+		
+		// Verify file extension
+		$ext = pathinfo($fUrl, PATHINFO_EXTENSION);
+		if(!array_key_exists($ext, $allowed)) $file_err = "Error: Please select a valid file format. File Extension: ".$ext;
+		
+		// Verify file size
+		$data = file_get_contents($fUrl);
+		$filesize = strlen($data);
+		if(!$filesize || $filesize > $maxsize) 
+			$file_err = "Error: File size is larger than the allowed limit or empty. ".$clen;
+		else {
+			
+			$fileUrl = 'upload/'.str_replace(" ", "_", $fName).'_upload.'.$ext;
+			file_put_contents($fileUrl, $data);
+		}
+	} else
 	
-	
-	// Check if file was uploaded from local computer without errors
-	if(isset($_FILES["resource"]) && $_FILES["resource"]["error"] == 0 && $filename_err == "" && $fileDesc_err == ""){
-		$allowed = array(
-			// image types
-			"jpg" => "image/jpg", 
-			"jpeg" => "image/jpeg", 
-			"gif" => "image/gif", 
-			"png" => "image/png",
-			// document types
-			'pdf' => 'application/pdf',
-			'txt' => 'text/plain',
-			'doc' => 'application/msword',
-			'rtf' => 'application/rtf',
-			'xls' => 'application/vnd.ms-excel',
-			'ppt' => 'application/vnd.ms-powerpoint',
-			// audio/video files
-			'mp3' => 'audio/mpeg',
-			'mp4' => 'video/mp4',
-			// archive files
-			'zip' => 'application/zip',
-			);
+	// Check if file was uploaded from local computer.
+	// Only do this if the File URL from external source is empty
+	if(isset($_FILES["resource"]) && $_FILES["resource"]["error"] == 0){
 		$filename = $_FILES["resource"]["name"];
 		$filetype = $_FILES["resource"]["type"];
 		$filesize = $_FILES["resource"]["size"];
@@ -69,7 +88,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 		if(!array_key_exists($ext, $allowed)) die("Error: Please select a valid file format.");
 	
 		// Verify file size
-		$maxsize = MAX_FILESIZE * 1024 * 1024; // Test value: 5MB
 		if($filesize > $maxsize) die("Error: File size is larger than the allowed limit.");
 	
 		// Verify MIME type of the file
@@ -79,39 +97,40 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 				$note = $_FILES["resource"]["name"] . " is already exists.";
 			} else{
 				move_uploaded_file($_FILES["resource"]["tmp_name"], "upload/" . $_FILES["resource"]["name"]);
-				
-				// #### Insert into database after file has been uploaded
-				// Prepare the insert statement
-				$sql = "INSERT INTO ca_files (url, filename, description, uploader, corp_id) VALUES (?, ?, ?, ?, ?)";
-				
 				// Get the actual file URL that stored on the server
 				$fileUrl = "upload/" . $_FILES["resource"]["name"];
-				
-				if($stmt = mysqli_prepare($link, $sql)){
-					// Bind variables to the prepared statement as parameters
-					mysqli_stmt_bind_param($stmt, "ssssi", $fileUrl, $fName, $fDesc, $username, $usercorpid);
-										
-					// Attempt to execute the prepared statement
-					if(mysqli_stmt_execute($stmt)){
-						// Redirect to login page
-						//header("location: login.php");
-						$note = "Your file was uploaded successfully.";
-					} else {
-						$sql_err =  "Something went wrong. Please try again later.";
-					}
-				}
-				 
-				// Close statement
-				mysqli_stmt_close($stmt);
-				
-				// Close connection
-				mysqli_close($link);
 			} 
 		} else{
 			$note = "Error: There was a problem uploading your file. Please try again."; 
 		}
 	} else{
 		$note = "Error: " . $_FILES["resource"]["error"];
+	}
+
+	// #### Insert into database after file has been uploaded and there is no error
+	if($filename_err == "" && $file_err == "" && $note == "") {
+		// Prepare the insert statement
+		$sql = "INSERT INTO ca_files (url, original_url, filename, description, uploader, corp_id) VALUES (?, ?, ?, ?, ?, ?)";
+		
+		if($stmt = mysqli_prepare($link, $sql)){
+			// Bind variables to the prepared statement as parameters
+			mysqli_stmt_bind_param($stmt, "sssssi", $fileUrl, $fUrl, $fName, $fDesc, $username, $usercorpid);
+								
+			// Attempt to execute the prepared statement
+			if(mysqli_stmt_execute($stmt)){
+				// Log action
+				log_action($link, 3, $userid, $username, 0, $fName, 0, "");
+				$note = "Your file was uploaded successfully.";
+			} else {
+				$sql_err =  "Something went wrong. Please try again later.";
+			}
+		}
+		 
+		// Close statement
+		mysqli_stmt_close($stmt);
+		
+		// Close connection
+		//mysqli_close($link);
 	}
 }
 ?>
@@ -150,6 +169,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 											<div class="form-group">
 												<label for="fileUrl">Upload From URL:</label>
 												<input class="form-control" value="<?php echo $fUrl; ?>" type="text" name="fileUrl" id="fileUrl">
+												<span><?php echo $file_err; ?></span>
 											</div>
 											<div class="form-group">
 												<label for="fileSelect">Upload From Computer:</label>
@@ -202,5 +222,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 			<script src="includes/js/main.js"></script>
 		</div> <!-- main_content -->
 	</div> <!-- container-custom -->	
+<?php
+// Close connection
+mysqli_close($link);
+										
+?>
 </body>
 </html>
