@@ -55,3 +55,8 @@ include('includes/side_menu.php');
 		</div> <!-- main_content -->
 	</div> <!-- container-custom -->	
 <?php
+// Close connection
+mysqli_close($link);
+?>
+</body>
+</html>

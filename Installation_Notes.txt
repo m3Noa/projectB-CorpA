@@ -1,0 +1,10 @@
+A - For New Installation:
+ - Copy/Upload all the files to the Web Host Server (usually directly into "/public_html")
+ - Edit file "/includes/sys_config.php", change the values for the database connection
+(DB_SERVER,DB_USERNAME,DB_PASSWORD,DB_NAME) according to your Web Host Server.
+ - Import/Run the file "database.sql" to your MySQL server.
+
+
+B - Update from old version:
+ - Overwrite all the files
+ - If there is a big change in the database structure, you may need to drop all data tables and re-import "database.sql"

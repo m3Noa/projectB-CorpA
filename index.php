@@ -292,8 +292,10 @@ if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
 		<script src="includes/js/chosen/chosen.jquery.min.js"></script>
 		</div> <!-- main_content -->
 	 <!-- container-custom -->
-
-	
-
-
-<?php</html>
+<?php
+// Close connection
+//mysqli_close($link);
+										
+?>
+</body>
+</html>
